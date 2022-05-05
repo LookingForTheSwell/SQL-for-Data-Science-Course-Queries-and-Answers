@@ -1,0 +1,54 @@
+![alt text](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/UAPENoOVEei4RQ5L9j9nDA_5042a1f0839511e8beb2b5b4ae9fa29a_ER-Diagram.png?expiry=1651881600000&hmac=xKwm4TPcaj55IjOzoDXZFTOZ8SoBmTWIXS4TwyvP7Ic "ER DIAGRAM OF DATABASE USED FOR QUESTIONS")
+
+1. How many albums does the artist Led Zeppelin have? 
+SELECT *
+FROM albums al
+LEFT JOIN artists ar
+ON al.artistid = ar.artistid
+WHERE ar.name= 'Led Zeppelin'
+
+2. Create a list of album titles and the unit prices for the artist "Audioslave". How many records are returned?
+SELECT ar.name
+	,alb.title AS album_titles
+	,t.unitprice
+FROM ((albums alb INNER JOIN artists ar ON alb.artistid = ar.artistid) 
+        INNER JOIN tracks t ON alb.albumid = t.albumid)
+WHERE ar.name = 'Audioslave'
+
+3. Find the first and last name of any customer who does not have an invoice. Are there any customers returned from the query?  
+SELECT DISTINCT(C.CUSTOMERID), c. firstname, c. lastname, i.invoiceid
+FROM customers c
+LEFT JOIN invoices i
+ON c.customerid = i.customerid
+WHERE i.invoiceid is null
+
+4. Find the total price for the album “Big Ones”?
+select SUM(t.unitprice), al.title
+from albums al
+join tracks t
+ON al.albumid = t.albumid
+where al.title = 'Big Ones'
+
+5. How many records are created when you apply a Cartesian join to the invoice and invoice items table?
+select *
+from invoices cross join invoice_items
+--produced an error for taking longer than 3 seconds, so I got the right answer by simply selecting * of both tables, writing down 
+the total rows of each, and multiplying them together
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
