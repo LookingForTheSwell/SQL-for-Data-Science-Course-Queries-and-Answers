@@ -1,0 +1,86 @@
+--Module 3 Coding Assignment
+
+-- All of the questions in this quiz refer to the open source Chinook Database. Please familiarize yourself 
+-- with the ER diagram in order to familiarize yourself with the table and column names in order to write 
+-- accurate queries and get the appropriate answers.
+--(https://ucde-rey.s3.amazonaws.com/DSV1015/ChinookDatabaseSchema.png)
+
+
+-- 1. Using a subquery, find the names of all the tracks for the album "Californication". 
+-- What is the title of the 8th track?
+SELECT *    
+FROM 
+    (SELECT t.name
+			, t.trackid
+			, a.title AS album_name
+    FROM tracks t
+    JOIN albums a
+    ON t.albumid = a.albumid)
+WHERE album_name = 'Californication';
+
+
+--2. Find the total number of invoices for each customer along with the customer's full name, city and email.
+-- After running the query described above, what is the email address of the 5th person, František Wichterlová?)
+SELECT i.customerid
+		, COUNT(i.invoiceid) AS Total_Invoices
+		, c.firstname || ' ' || c.lastname AS full_name
+		, c.city
+		, c.email
+FROM invoices i
+JOIN customers c
+ON i.customerid = c.customerid
+GROUP BY i.customerid;
+
+
+--3. Retrieve the track name, album, artistID, and trackID for all the albums.
+-- What is the song title of trackID 12 from the "For Those About to Rock We Salute You" album
+SELECT t.name
+        , al.title AS Album 
+        , ar.artistid 
+        , t.trackid 
+FROM ((albums al JOIN artists ar ON al.artistid = ar.artistid)
+       JOIN tracks t ON al.albumid = t.albumid)
+WHERE Album LIKE 'For Those About to Rock We Salute You' 
+AND trackid = '12';
+
+
+--4. Retrieve a list with the managers last name, and the last name of the employees who report to him or her.
+--After running the query described above, who are the reports for the manager named Mitchell
+SELECT E.lastname AS Employee
+		, 'Reports to'              --added to increase understanding when viewing report
+		, M.lastname AS Manager
+FROM employees E JOIN employees M 
+ON E.reportsTo = M.employeeID
+
+
+--5. Find the name and ID of the artists who do not have albums.
+--After running the query described above, two of the records returned have the same last name.
+SELECT ar.name
+		, ar.artistid
+		, al.title AS No_albums
+FROM artists Ar
+LEFT JOIN albums al 
+ON ar.artistid = al.artistid 
+WHERE al.artistid IS NULL
+
+--6. Use a UNION to create a list of all the employee's and customer's first names and last names 
+-- ordered by the last name in descending order... determine what is the last name of the 6th record?
+SELECT e.firstname
+		, e.lastname
+FROM employees e  
+UNION
+SELECT c.firstname
+		, c.lastname 
+FROM customers c
+Order by c.lastname DESC
+LIMIT 6
+
+
+--7. See if there are any customers who have a different city listed in their billing city versus their customer city.
+SELECT DISTINCT(c.firstname || ' ' || c.lastname) AS FullName
+		, c.city AS Customer_City
+		, i.billingcity AS Billing_City
+FROM customers c 
+JOIN invoices i 
+ON c.customerid = i.customerid
+WHERE Customer_City != Billing_City
