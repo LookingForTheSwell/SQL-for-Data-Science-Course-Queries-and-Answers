@@ -1,0 +1,56 @@
+--Module 4 Coding Assignment
+
+-- All of the questions in this quiz refer to the open source Chinook Database. Please familiarize yourself 
+-- with the ER diagram in order to familiarize yourself with the table and column names in order to write 
+-- accurate queries and get the appropriate answers.
+--(https://ucde-rey.s3.amazonaws.com/DSV1015/ChinookDatabaseSchema.png)
+
+
+--1. Pull a list of customer ids with the customer’s full name, and address, along with combining their city and country together. 
+--Be sure to make a space in between these two and make it UPPER CASE. (e.g. LOS ANGELES USA)
+--What is the city and country result for CustomerID 16?
+SELECT firstname || ' ' || lastname AS Full_name
+    , address
+    , UPPER(city || ' ' || Country) AS City_and_Country
+FROM Customers
+Where customerid = '16'
+
+
+--2. Create a new employee user id by combining the first 4 letters of the employee’s first name with the first 2 letters of the employee’s last name. 
+--Make the new field lower case and pull each individual step to show your work.
+--What is the final result for Robert King?
+SELECT LOWER(SUBSTR(firstname, 1, 4) || SUBSTR(lastname, 1, 2)) AS new_employee_user_id
+FROM employees
+
+
+--3. Show a list of employees who have worked for the company for 15 or more years using the current date function. 
+--Sort by lastname ascending
+--What is the lastname of the last person on the list returned?
+SELECT (Date('now') - Date(hiredate)) AS Total_time_at_company, firstname, lastname
+FROM employees
+ORDER BY lastname ASC
+
+
+--4. Profiling the Customers table, answer the following question
+--Are there any columns with null values? Indicate any below
+SELECT *
+FROM customers
+WHERE address IS NULL  -- replaced and repeated code for all individual columns
+
+
+--5. Find the cities with the most customers and rank in descending order
+--Which of the following cities indicate having 2 customers
+SELECT COUNT(customerid) AS customer_ranking, city
+FROM customers
+GROUP BY city
+ORDER BY customer_ranking DESC
+
+
+--6. Create a new customer invoice id by combining a customer’s invoice id with their first and last name while ordering your query in the 
+--following order: firstname, lastname, and invoiceID
+--Select all of the correct "AstridGruber" entries that are returned in your results below
+SELECT (c.firstname || c.lastname || i.InvoiceID) AS new_customer_invoice_id 
+from invoices i
+JOIN customers c 
+ON i.customerid = c.customerid 
+where new_customer_invoice_id LIKE '%AstridGruber%'
